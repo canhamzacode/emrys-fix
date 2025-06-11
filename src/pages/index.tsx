@@ -8,23 +8,44 @@ import { APP_DESCRIPTION, APP_NAME } from '../consts/app';
 const Home: NextPage = () => {
   const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const handleStartBridging = () => {
     setShowDropdown(!showDropdown);
   };
 
   const navigateToBridge = (network: string) => {
-    if (network === 'utxo') {
-      router.push('/utxo');
+    if (isNavigating) {
+      console.log('Navigation already in progress, ignoring call');
+      return;
     }
-
-    if (network === 'mainnet') {
+    
+    console.log('navigateToBridge called with network:', network);
+    console.log('Current pathname:', window.location.pathname);
+    
+    setIsNavigating(true);
+    
+    // Add a small delay to see if multiple calls are happening
+    setTimeout(() => {
+      console.log('After timeout - Current pathname:', window.location.pathname);
+    }, 100);
+    
+    if (network === 'utxo') {
+      console.log('Navigating to /utxo');
+      router.push('/utxo');
+    } else if (network === 'mainnet') {
+      console.log('Navigating to /bridge');
       router.push('/bridge');
     } else {
-      // For testnet, you can define a different route if needed
+      console.log('Navigating to /bridge?network=testnet');
       router.push('/bridge?network=testnet');
     }
     setShowDropdown(false);
+    
+    // Reset navigation flag after a delay
+    setTimeout(() => {
+      setIsNavigating(false);
+    }, 1000);
   };
 
   return (
@@ -64,19 +85,31 @@ const Home: NextPage = () => {
             <div className="absolute z-10 mt-2 w-full overflow-hidden rounded-md bg-primary-600 shadow-lg">
               <div className="py-1">
                 <button
-                  onClick={() => navigateToBridge('mainnet')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigateToBridge('mainnet');
+                  }}
                   className="block w-full px-4 py-2 text-left text-sm text-white"
                 >
                   Bridge on Mainnet
                 </button>
                 <button
-                  onClick={() => navigateToBridge('testnet')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigateToBridge('testnet');
+                  }}
                   className="block w-full px-4 py-2 text-left text-sm text-white"
                 >
                   Bridge on Testnet
                 </button>
                 <button
-                  onClick={() => navigateToBridge('utxo')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigateToBridge('utxo');
+                  }}
                   className="block w-full px-4 py-2 text-left text-sm text-white"
                 >
                   ZPL UTXO Bridge

@@ -44,7 +44,7 @@ export default function Header() {
             </div>
             <div className={styles.header__container__start__nav}>
               <Link
-                href={'/'}
+                href={'/utxo'}
                 className={`${styles.nav__icon} ${pathname === '/' ? styles.activeLink : ''}`}
               >
                 <Icon name="Provide" />
